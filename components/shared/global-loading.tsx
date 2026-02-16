@@ -7,24 +7,35 @@ export function GlobalLoading() {
     return (
         <motion.div
             initial={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ 
+                opacity: 0,
+                transition: { duration: 0.3, delay: 2.2 } // Exit after logo flies away
+            }}
             transition={{ duration: 0.5 }}
             className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-black"
         >
             <motion.div
-                initial={{ scale: 0.8, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
+                initial={{ scale: 0.8, opacity: 0, y: 0 }}
+                animate={{ 
+                    scale: [1, 1.2, 1, 1.2, 1, 1.2, 1, 1.2, 1, 0.8, 0],
+                    opacity: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
+                    y: [0, -15, 0, -15, 0, -15, 0, -15, 0, -15, -300]
+                }}
                 transition={{
-                    duration: 0.8,
-                    repeat: Infinity,
-                    repeatType: "mirror",
-                    ease: "easeInOut",
+                    duration: 2.5,
+                    times: [0, 0.09, 0.18, 0.27, 0.36, 0.45, 0.54, 0.63, 0.72, 0.81, 1],
+                    ease: ["easeOut", "easeIn", "easeOut", "easeIn", "easeOut", "easeIn", "easeOut", "easeIn", "easeOut", "easeIn", "easeOut"],
+                    repeat: 0, // No repeat - fly away once
+                    onComplete: () => {
+                        // Page will open naturally after this animation completes
+                    }
                 }}
                 className="relative mb-8 h-24 w-24"
             >
                 <Image
-                    src="/favicon.ico"
-                    alt="Logo"
+                    src="/TVC logo white.png"
+                    alt="TVC Logo"
                     fill
                     className="object-contain"
                     priority

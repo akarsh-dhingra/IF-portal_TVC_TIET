@@ -1,38 +1,14 @@
 [
   {
-    "_id": "698d7ac62de5e825f63899f9",
-    "companyId": "698d7a892de5e825f63899c9",
+    "_id": "69928bf8fdf7242ec5134d06",
+    "companyId": "69928bda0f0561a03cca6d81",
     "title": "sde",
-    "description": "software developer ",
-    "stipend": "3000",
-    "eligibility": "2nd year Btech",
-    "currency": "INR",
-    "createdAt": "2026-02-12T07:01:26.640Z",
-    "updatedAt": "2026-02-12T07:01:26.640Z",
-    "__v": 0
-  },
-  {
-    "_id": "698d7eab2de5e825f6389b32",
-    "companyId": "698d7a892de5e825f63899c9",
-    "title": "backend dev",
-    "description": "nodejs",
-    "stipend": "3000",
+    "description": "jhgfghjk",
+    "stipend": "3456",
     "eligibility": "any btech student ",
     "currency": "INR",
-    "createdAt": "2026-02-12T07:18:03.698Z",
-    "updatedAt": "2026-02-12T07:18:03.698Z",
-    "__v": 0
-  },
-  {
-    "_id": "698d83692de5e825f6389d16",
-    "companyId": "698d7a892de5e825f63899c9",
-    "title": "ml",
-    "description": "machine learning",
-    "stipend": "30000",
-    "eligibility": "any btech student ",
-    "currency": "INR",
-    "createdAt": "2026-02-12T07:38:17.293Z",
-    "updatedAt": "2026-02-12T07:38:17.293Z",
+    "createdAt": "2026-02-16T03:16:09.018Z",
+    "updatedAt": "2026-02-16T03:16:09.018Z",
     "__v": 0
   }
 ]

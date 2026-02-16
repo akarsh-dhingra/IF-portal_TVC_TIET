@@ -6,6 +6,7 @@ import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { useAuthStore } from "@/lib/store/auth"
 import { StudentNav } from "@/components/layout/student-nav"
+import Image from "next/image"
 import { Loader2 } from "lucide-react"
 
 export default function StudentLayout({
@@ -29,7 +30,8 @@ export default function StudentLayout({
         console.log('Redirecting to login. Token:', !!token, 'Role:', role, 'Normalized:', normalizedRole)
         router.push("/login")
       } else {
-        setIsLoading(false)
+        const timer = setTimeout(() => setIsLoading(false), 1000)
+        return () => clearTimeout(timer)
       }
     }
   }, [_hasHydrated, token, role, router])
@@ -38,8 +40,16 @@ export default function StudentLayout({
   if (!_hasHydrated || isLoading) {
     return (
       <div className="flex h-screen w-full items-center justify-center bg-background">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
-        <span className="sr-only">Loading...</span>
+        <div className="flex flex-col items-center gap-4">
+          <Image 
+            src="/TVC logo Black.png"
+            alt="TVC Logo" 
+            width={32} 
+            height={32}
+            className="h-8 w-8 animate-spin"
+          />
+          <span className="sr-only">Loading...</span>
+        </div>
       </div>
     )
   }

@@ -1,14 +1,16 @@
 "use client"
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { useAuthStore } from '@/lib/store/auth';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { InputOTP, InputOTPGroup, InputOTPSlot } from '@/components/ui/input-otp';
-import { Loader2, User, Building2, ArrowLeft, ArrowRight, CheckCircle2 } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useState, useEffect } from "react"
+import Image from "next/image"
+import { useRouter } from "next/navigation"
+import { useTheme } from "next-themes"
+import { useAuthStore } from "@/lib/store/auth"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp"
+import { Loader2, User, Building2, ArrowLeft, ArrowRight, CheckCircle2 } from "lucide-react"
+import { motion, AnimatePresence } from "framer-motion";
 
 interface RegisterFormProps {
   onSwitchToLogin: () => void;
@@ -206,7 +208,7 @@ export function RegisterForm({ onSwitchToLogin }: RegisterFormProps) {
                 <User className="h-7 w-7" />
               </div>
               <div className="flex-1">
-                <h3 className="font-black text-foreground uppercase tracking-wider">Candidate Alpha</h3>
+                <h3 className="font-black text-foreground uppercase tracking-wider">I am a Student</h3>
                 <p className="text-xs text-muted-foreground font-medium mt-1">Looking for professional placements and skill validation.</p>
               </div>
               <ArrowRight className="h-5 w-5 text-zinc-700 group-hover:text-cyan-400 group-hover:translate-x-1 transition-all" />
@@ -220,7 +222,7 @@ export function RegisterForm({ onSwitchToLogin }: RegisterFormProps) {
                 <Building2 className="h-7 w-7" />
               </div>
               <div className="flex-1">
-                <h3 className="font-black text-foreground uppercase tracking-wider">Enterprise Entity</h3>
+                <h3 className="font-black text-foreground uppercase tracking-wider">I am a Company</h3>
                 <p className="text-xs text-muted-foreground font-medium mt-1">Seeking high-performance talent and strategic growth.</p>
               </div>
               <ArrowRight className="h-5 w-5 text-zinc-700 group-hover:text-purple-400 group-hover:translate-x-1 transition-all" />
@@ -251,14 +253,14 @@ export function RegisterForm({ onSwitchToLogin }: RegisterFormProps) {
                     <Input name="year" required value={formData.year} onChange={handleInputChange} placeholder="e.g., 3rd" className="h-11 bg-white/5 border-white/10 rounded-xl" />
                   </div>
                   <div className="space-y-2">
-                    <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">Discipline (Branch)</Label>
+                    <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">Branch</Label>
                     <Input name="branch" required value={formData.branch} onChange={handleInputChange} placeholder="e.g., CSE" className="h-11 bg-white/5 border-white/10 rounded-xl" />
                   </div>
                 </>
               ) : (
                 <>
                   <div className="space-y-2">
-                    <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">Entity Name</Label>
+                    <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">Company Name</Label>
                     <Input name="companyName" required value={formData.companyName} onChange={handleInputChange} className="h-11 bg-white/5 border-white/10 rounded-xl" />
                   </div>
                   <div className="space-y-2">
@@ -282,7 +284,7 @@ export function RegisterForm({ onSwitchToLogin }: RegisterFormProps) {
               </div>
 
               <div className="space-y-2">
-                <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">Mobile Protocol</Label>
+                <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">Mobile Number</Label>
                 <Input name="phone" type="tel" required value={formData.phone} onChange={handleInputChange} placeholder="+91..." className="h-11 bg-white/5 border-white/10 rounded-xl" />
               </div>
 
@@ -295,8 +297,16 @@ export function RegisterForm({ onSwitchToLogin }: RegisterFormProps) {
             <Button type="submit" className="w-full h-12 bg-foreground text-background hover:bg-foreground/90 rounded-xl font-black uppercase tracking-widest transition-all shadow-xl shadow-foreground/10 group font-sans" disabled={isLoading}>
               {isLoading ? (
                 <>
-                  <Loader2 className="h-5 w-5 animate-spin mr-2" />
-                  Provisioning Account...
+                  <div className="flex items-center gap-2">
+                    <Image 
+                      src="/TVC logo white.png"
+                      alt="TVC Logo" 
+                      width={20} 
+                      height={20}
+                      className="h-5 w-5 animate-spin"
+                    />
+                    Creating Account...
+                  </div>
                 </>
               ) : (
                 <>
@@ -336,7 +346,7 @@ export function RegisterForm({ onSwitchToLogin }: RegisterFormProps) {
                 </InputOTPGroup>
               </InputOTP>
               <p className="text-[10px] text-muted-foreground text-center">
-                Enter the 6-digit code we sent to your registered email address.
+                Enter the 6-digit code we sent to your registered email address.( Check your spam folder too)
               </p>
             </div>
 
@@ -347,15 +357,21 @@ export function RegisterForm({ onSwitchToLogin }: RegisterFormProps) {
                 disabled={isLoading || otp.length !== 6}
               >
                 {isLoading ? (
-                  <>
-                    <Loader2 className="h-5 w-5 animate-spin mr-2" />
+                  <div className="flex items-center gap-2">
+                    <Image 
+                      src="/TVC logo white.png"
+                      alt="TVC Logo" 
+                      width={20} 
+                      height={20}
+                      className="h-5 w-5 animate-spin"
+                    />
                     Verifying Code...
-                  </>
+                  </div>
                 ) : (
-                  <>
+                  <div>
                     Verify Identity
                     <CheckCircle2 className="ml-2 h-4 w-4 group-hover:scale-110 transition-transform" />
-                  </>
+                  </div>
                 )}
               </Button>
 
