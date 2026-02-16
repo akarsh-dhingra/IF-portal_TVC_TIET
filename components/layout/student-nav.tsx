@@ -6,17 +6,20 @@ import { usePathname, useRouter } from "next/navigation"
 import { useTheme } from "next-themes"
 import { useAuthStore } from "@/lib/store/auth"
 import { Button } from "@/components/ui/button"
-import { BookOpen, Users, FileText, LogOut, Home } from "lucide-react"
+import { BookOpen, Users, FileText, LogOut, Home, Menu, X } from "lucide-react"
 import { ThemeToggle } from "@/components/shared/theme-toggle"
+import { Sheet, SheetContent } from "@/components/ui/sheet"
 
 import { motion } from "framer-motion"
 import { cn } from "@/lib/utils"
+import { useState } from "react"
 
 export function StudentNav() {
   const pathname = usePathname()
   const router = useRouter()
   const { theme } = useTheme()
   const logout = useAuthStore((state) => state.logout)
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
   const handleLogout = () => {
     logout()
@@ -30,8 +33,9 @@ export function StudentNav() {
     { href: "/student/profile", label: "My Profile", icon: BookOpen },
   ]
 
-  return (
-    <aside className="w-68 bg-hsl(var(--sidebar-background)) text-hsl(var(--sidebar-foreground)) flex flex-col border-r border-hsl(var(--sidebar-border)) transition-colors duration-500 overflow-hidden">
+  const NavContent = () => (
+    <>
+      {/* Logo Section */}
       <div className="p-8 border-b border-hsl(var(--sidebar-border))">
         <div className="flex items-center gap-3">
           <div className="h-10 w-10 rounded-xl flex items-center justify-center">
@@ -44,12 +48,13 @@ export function StudentNav() {
             />
           </div>
           <div>
-            <h1 className="text-xl font-black tracking-tighter text-foreground">Internshp Fair</h1>
+            <h1 className="text-xl font-black tracking-tighter text-foreground">Internship Fair</h1>
             <p className="text-[10px] font-black uppercase tracking-[0.2em] text-cyan-500/80">Student Journey</p>
           </div>
         </div>
       </div>
 
+      {/* Navigation */}
       <nav className="flex-1 space-y-1.5 p-4 mt-4 relative z-10">
         <div className="mb-4 px-4">
           <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/50">Core Modules</p>
@@ -88,10 +93,17 @@ export function StudentNav() {
         })}
       </nav>
 
+      {/* Footer */}
       <div className="p-6 border-t border-hsl(var(--sidebar-border)) space-y-6 relative z-10">
         <div className="flex items-center justify-between px-2">
           <span className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">Interface Theme</span>
           <ThemeToggle />
+        </div>
+
+        <div className="px-2 py-3 bg-foreground/5 rounded-xl border border-border">
+          <p className="text-[9px] font-medium text-muted-foreground text-center leading-relaxed">
+            For queries contact: <span className="text-cyan-500 font-bold">gsuri_be23@thapar.edu</span>
+          </p>
         </div>
 
         <Button
@@ -103,6 +115,35 @@ export function StudentNav() {
           <span className="text-[10px] font-black uppercase tracking-[0.2em]">End Session</span>
         </Button>
       </div>
-    </aside>
+    </>
+  )
+
+  return (
+    <>
+      {/* Mobile Hamburger Menu */}
+      <div className="lg:hidden fixed top-4 left-4 z-50">
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          className="bg-background/80 backdrop-blur-sm border border-border"
+        >
+          <Menu className="h-5 w-5" />
+          <span className="sr-only">Toggle Menu</span>
+        </Button>
+      </div>
+
+      {/* Mobile Sidebar Sheet */}
+      <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
+        <SheetContent side="left" className="w-80 p-0 bg-hsl(var(--sidebar-background)) text-hsl(var(--sidebar-foreground))">
+          <NavContent />
+        </SheetContent>
+      </Sheet>
+
+      {/* Desktop Sidebar */}
+      <aside className="hidden lg:flex w-68 bg-hsl(var(--sidebar-background)) text-hsl(var(--sidebar-foreground)) flex flex-col border-r border-hsl(var(--sidebar-border)) transition-colors duration-500 overflow-hidden">
+        <NavContent />
+      </aside>
+    </>
   )
 }

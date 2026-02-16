@@ -14,9 +14,12 @@ export function ClientLayout({ children }: { children: React.ReactNode }) {
         // Simulate initial load
         const timer = setTimeout(() => {
             setIsLoading(false)
-        }, 2000)
+        }, 500) // Reduced from 2000ms to 500ms
         return () => clearTimeout(timer)
     }, [])
+
+    // Don't show loading state on landing page
+    const shouldShowLoading = isLoading && pathname !== '/'
 
     return (
         <ThemeProvider
@@ -25,7 +28,7 @@ export function ClientLayout({ children }: { children: React.ReactNode }) {
             enableSystem
         >
             <AnimatePresence mode="wait">
-                {isLoading ? (
+                {shouldShowLoading ? (
                     <GlobalLoading key="loader" />
                 ) : (
                     <motion.main
