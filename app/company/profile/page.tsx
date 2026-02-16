@@ -154,22 +154,22 @@ export default function CompanyProfilePage() {
   const backendUrl = process.env.NEXT_PUBLIC_API_URL
 
   return (
-    <div className="p-6 lg:p-10 max-w-7xl mx-auto space-y-10 min-h-screen">
+    <div className="p-4 sm:p-6 lg:p-10 max-w-7xl mx-auto space-y-10 min-h-screen">
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="flex flex-col lg:flex-row lg:items-end justify-between gap-8"
+        className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 lg:gap-8"
       >
         <div className="space-y-2">
           <div className="flex items-center gap-2 text-cyan-500">
             <Sparkles className="h-4 w-4" />
             <span className="text-[10px] font-bold tracking-[0.2em] uppercase">Settings</span>
           </div>
-          <h1 className="text-4xl lg:text-5xl font-black text-foreground tracking-tight">Company Profile</h1>
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-black text-foreground tracking-tight">Company Profile</h1>
           <p className="text-muted-foreground font-medium">Update your organizational preferences and brand identity.</p>
         </div>
 
-        <div className="flex items-center gap-4">
+        <div className="flex flex-col sm:flex-row items-center gap-4">
           <div className={`px-4 py-2 rounded-2xl bg-foreground/5 border border-border flex items-center gap-2 text-muted-foreground`}>
             <ShieldCheck className="h-4 w-4 text-emerald-500" />
             <span className="text-[10px] font-black uppercase tracking-widest text-foreground">Active Account</span>
@@ -177,22 +177,22 @@ export default function CompanyProfilePage() {
           <Button
             onClick={handleSubmit}
             disabled={isSaving}
-            className="h-12 px-10 bg-foreground text-background hover:bg-foreground/90 rounded-2xl font-black text-[10px] uppercase tracking-widest shadow-xl shadow-foreground/10"
+            className="h-12 px-6 sm:px-10 bg-foreground text-background hover:bg-foreground/90 rounded-2xl font-black text-[10px] uppercase tracking-widest shadow-xl shadow-foreground/10"
           >
             {isSaving ? <Loader2 className="h-4 w-4 animate-spin" /> : "Save Changes"}
           </Button>
         </div>
       </motion.div>
 
-      <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <div className="lg:col-span-2 space-y-8">
-          <GlassCard className="p-8 lg:p-12 space-y-10 border-border bg-card/50">
+      <form onSubmit={handleSubmit} className="grid grid-cols-1 xl:grid-cols-3 gap-6 lg:gap-8">
+        <div className="xl:col-span-2 space-y-6 lg:space-y-8">
+          <GlassCard className="p-6 sm:p-8 lg:p-12 space-y-6 sm:space-y-10 border-border bg-card/50">
             <div className="flex items-center gap-3">
               <div className="h-10 w-1.5 bg-cyan-500 rounded-full" />
               <h3 className="text-2xl font-black text-foreground tracking-tight">Core Details</h3>
             </div>
 
-            <div className="grid gap-10">
+            <div className="grid gap-6 sm:gap-8 lg:gap-10">
               <div className="space-y-3">
                 <Label htmlFor="name" className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">Company Name</Label>
                 <div className="relative group">
@@ -202,13 +202,13 @@ export default function CompanyProfilePage() {
                     name="name"
                     value={companyData.name}
                     onChange={handleInputChange}
-                    className="h-14 pl-12 bg-foreground/5 border-border rounded-2xl text-foreground font-bold focus:ring-cyan-500/50"
+                    className="h-12 sm:h-14 pl-12 bg-foreground/5 border-border rounded-2xl text-foreground font-bold focus:ring-cyan-500/50"
                     required
                   />
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 lg:gap-8">
                 <div className="space-y-3">
                   <Label htmlFor="email" className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">Corporate Email</Label>
                   <div className="relative group">

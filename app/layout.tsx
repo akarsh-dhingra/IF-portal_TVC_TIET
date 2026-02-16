@@ -12,6 +12,7 @@ export const metadata: Metadata = {
   title: "Internship Fair Portal",
   description: "Platform for students to find internships and companies to recruit talent",
   generator: "Next.js",
+  viewport: "width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no",
 }
 
 export default function RootLayout({
