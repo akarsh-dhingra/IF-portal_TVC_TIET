@@ -5,6 +5,7 @@ const path = require('path');
 const connectDB = require('./config/database');
 const errorHandler = require('./middleware/errorHandler');
 
+
 // Load env vars
 dotenv.config();
 
@@ -38,7 +39,7 @@ const startServer = async () => {
     await connectDB();
 
     const app = express();
-
+     app.set('trust proxy', 1); 
     // Enable CORS with more permissive settings for development
     const allowedOrigins = [
       'http://localhost:3000',
