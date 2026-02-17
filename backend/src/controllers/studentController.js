@@ -1,15 +1,40 @@
 const cloudinary = require('cloudinary').v2;
-cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
-});
-
+const fs = require('fs');
 const asyncHandler = require('express-async-handler');
 const Company = require('../models/Company');
 const Role = require('../models/Role');
 const Application = require('../models/Application');
 const Student = require('../models/Student');
+
+// Helper to upload to Cloudinary
+const uploadToCloudinary = async (file) => {
+  try {
+    console.log(`[DEBUG] Uploading file: ${file.originalname}, Size: ${file.size}, Mime: ${file.mimetype}`);
+
+    if (file.size === 0) {
+      throw new Error('File is empty');
+    }
+
+    // Use 'auto' to let Cloudinary detect the best type.
+    // If it's a standard PDF, it will be 'image' or 'page'.
+    // If it's complex, it might be 'raw'.
+    const result = await cloudinary.uploader.upload(file.path, {
+      resource_type: "raw", // Force raw to prevent PDF processing issues
+      folder: "internship-portal",
+      use_filename: true,
+      unique_filename: true,
+    });
+    return result.secure_url;
+  } catch (error) {
+    console.error('Cloudinary upload error:', error);
+    throw new Error('Image/File upload failed: ' + error.message);
+  } finally {
+    // Always clean up local file
+    if (file.path && fs.existsSync(file.path)) {
+      fs.unlinkSync(file.path);
+    }
+  }
+};
 
 // @desc    Get all companies
 // @route   GET /api/student/companies
@@ -38,10 +63,6 @@ const getCompany = asyncHandler(async (req, res) => {
   if (company) {
     // Also fetch roles for this company
     const roles = await Role.find({ companyId: company._id });
-    try {
-      const fs = require('fs');
-      fs.writeFileSync('debug_student_roles.json', JSON.stringify(roles, null, 2));
-    } catch (e) { }
     res.json({ success: true, data: { company, roles } });
   } else {
     res.status(404);
@@ -83,31 +104,18 @@ const applyJob = asyncHandler(async (req, res) => {
     }
     resumeUrl = student.resumeUrl;
   } else {
-      if (!req.file) {
-        res.status(400);
-        throw new Error('Resume file is required');
-      }
-    
-      // Upload to Cloudinary (IMPORTANT)
-      const result = await cloudinary.uploader.upload(
-        req.file.path,
-        {
-          resource_type: "raw",
-          folder: "internship-portal",
-          public_id: `resume-${Date.now()}-${Math.random().toString(36).substring(2, 15)}`
-        }
-      );
-    
-      resumeUrl = result.secure_url;
-    
-      // Delete local temp file
-      const fs = require("fs");
-      fs.unlinkSync(req.file.path);
-    
-      // Auto-sync profile resume
-      student.resumeUrl = resumeUrl;
-      await student.save();
+    if (!req.file) {
+      res.status(400);
+      throw new Error('Resume file is required');
     }
+
+    // Upload to Cloudinary
+    resumeUrl = await uploadToCloudinary(req.file);
+
+    // Auto-sync profile resume
+    student.resumeUrl = resumeUrl;
+    await student.save();
+  }
 
 
   // Fetch role to get companyId
@@ -198,19 +206,7 @@ const updateProfile = asyncHandler(async (req, res) => {
     student.skills = skillsArray;
 
     if (req.file) {
-      const result = await cloudinary.uploader.upload(
-        req.file.path,
-        {
-          resource_type: "raw",
-          folder: "internship-portal",
-          public_id: `resume-${Date.now()}`
-        }
-      );
-    
-      const fs = require("fs");
-      fs.unlinkSync(req.file.path);
-    
-      student.resumeUrl = result.secure_url;
+      student.resumeUrl = await uploadToCloudinary(req.file);
     }
 
 
@@ -218,9 +214,14 @@ const updateProfile = asyncHandler(async (req, res) => {
     res.json({ success: true, data: updatedStudent });
   } else {
     // Create new student profile if it doesn't exist
+    let resumeUrl = '';
+    if (req.file) {
+      resumeUrl = await uploadToCloudinary(req.file);
+    }
+
     student = await Student.create({
       userId,
-      rollNo: rollNo || 'N/A',
+      rollNo: rollNo || `TEMP-${userId.toString().slice(-6)}`,
       branch: branch || 'N/A',
       year: year || 'N/A',
       cgpa: cgpa || 0,
@@ -229,7 +230,7 @@ const updateProfile = asyncHandler(async (req, res) => {
       github: github || '',
       linkedin: linkedin || '',
       skills: skillsArray,
-      resumeUrl: ''
+      resumeUrl: resumeUrl
     });
     res.status(201).json({ success: true, data: student });
   }
@@ -244,37 +245,27 @@ const uploadResume = asyncHandler(async (req, res) => {
     throw new Error('Resume file is required');
   }
 
-  const result = await cloudinary.uploader.upload(
-    req.file.path,
-    {
-      resource_type: "raw",
-      folder: "internship-portal",
-      public_id: `resume-${Date.now()}`
-    }
-  );
-
-  const fs = require("fs");
-  fs.unlinkSync(req.file.path);
+  const resumeUrl = await uploadToCloudinary(req.file);
 
   let student = await Student.findOne({ userId: req.user._id });
 
   if (!student) {
     student = await Student.create({
       userId: req.user._id,
-      rollNo: 'N/A',
+      rollNo: `TEMP-${req.user._id.toString().slice(-6)}`,
       branch: 'N/A',
       year: 'N/A',
       cgpa: 0,
-      resumeUrl: result.secure_url
+      resumeUrl: resumeUrl
     });
 
-    return res.status(201).json({ success: true, resume: result.secure_url });
+    return res.status(201).json({ success: true, resume: resumeUrl });
   }
 
-  student.resumeUrl = result.secure_url;
+  student.resumeUrl = resumeUrl;
   await student.save();
 
-  res.json({ success: true, resume: result.secure_url });
+  res.json({ success: true, resume: resumeUrl });
 });
 
 

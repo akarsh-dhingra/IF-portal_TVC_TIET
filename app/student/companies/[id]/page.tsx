@@ -55,7 +55,7 @@ export default function CompanyDetailsPage() {
     const loadData = async () => {
       try {
         setLoading(true)
-        const compRes = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/student/company/${companyId}`, {
+        const compRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/student/company/${companyId}`, {
           headers: { Authorization: `Bearer ${token}` },
         })
         const compJson = await compRes.json()
@@ -75,7 +75,7 @@ export default function CompanyDetailsPage() {
         if (r) {
           setExistingResume({
             name: r.split("/").pop() || "resume.pdf",
-            url: r.startsWith('http') ? r : `${process.env.NEXT_PUBLIC_BACKEND_URL}${r}`,
+            url: r.startsWith('http') ? r : `${process.env.NEXT_PUBLIC_API_URL}${r.startsWith('/') ? '' : '/'}${r}`,
           })
         }
 
@@ -154,7 +154,7 @@ export default function CompanyDetailsPage() {
   }
 
   const logoUrl = company.logo
-    ? (company.logo.startsWith('http') ? company.logo : `${process.env.NEXT_PUBLIC_BACKEND_URL}${company.logo}`)
+    ? (company.logo.startsWith('http') ? company.logo : `${process.env.NEXT_PUBLIC_API_URL}${company.logo}`)
     : "/favicon.ico"
 
   return (

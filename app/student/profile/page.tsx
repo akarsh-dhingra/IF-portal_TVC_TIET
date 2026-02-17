@@ -64,7 +64,10 @@ export default function StudentProfilePage() {
             skills: s.skills?.join(", ") || ""
           })
           if (s.resumeUrl) {
-            setUploadedResumeUrl(`${process.env.NEXT_PUBLIC_BACKEND_URL}${s.resumeUrl}`)
+            const url = s.resumeUrl.startsWith('http')
+              ? s.resumeUrl
+              : `${process.env.NEXT_PUBLIC_API_URL}${s.resumeUrl.startsWith('/') ? '' : '/'}${s.resumeUrl}`
+            setUploadedResumeUrl(url)
           }
         }
       } catch (err) {
@@ -111,7 +114,10 @@ export default function StudentProfilePage() {
       setIsUploading(true)
       const data = await studentApi.uploadResume(file)
       if (data.success) {
-        setUploadedResumeUrl(`${process.env.NEXT_PUBLIC_API_URL}${data.resume}`)
+        const url = data.resume.startsWith('http')
+          ? data.resume
+          : `${process.env.NEXT_PUBLIC_API_URL}${data.resume}`
+        setUploadedResumeUrl(url)
         toast.success("Resume uploaded successfully! 📁")
       }
     } catch (err) {
@@ -138,7 +144,7 @@ export default function StudentProfilePage() {
 
   if (isLoading) {
     return (
-    <div className="p-4 sm:p-6 lg:p-10 max-w-7xl mx-auto space-y-10 min-h-screen flex flex-col items-center justify-center">
+      <div className="p-4 sm:p-6 lg:p-10 max-w-7xl mx-auto space-y-10 min-h-screen flex flex-col items-center justify-center">
         <Loader2 className="h-8 w-8 sm:h-10 sm:w-10 animate-spin text-cyan-500" />
         <p className="text-zinc-500 font-medium tracking-widest uppercase text-xs">Synchronizing profile data...</p>
       </div>

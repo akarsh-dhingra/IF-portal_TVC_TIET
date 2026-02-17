@@ -28,7 +28,7 @@ export default function CompaniesPage() {
     if (!token) return
 
     setLoading(true)
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/student/companies`, {
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/student/companies`, {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then(res => res.json())

@@ -11,7 +11,7 @@ const {
   uploadResume
 } = require('../controllers/studentController');
 const { protect, authorize } = require('../middleware/auth');
-const upload = require('../middleware/upload');
+const upload = require('../middleware/tempUpload');
 
 // Apply protect middleware to all routes
 router.use(protect);

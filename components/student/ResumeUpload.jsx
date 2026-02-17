@@ -73,9 +73,9 @@ export default function ResumeUpload({ onUploadSuccess, existingResume }) {
     <div className="space-y-4">
       <div className="flex items-center gap-4">
         <div className="relative">
-          <Button 
-            type="button" 
-            variant="outline" 
+          <Button
+            type="button"
+            variant="outline"
             disabled={isUploading}
             className="relative"
           >
@@ -101,14 +101,14 @@ export default function ResumeUpload({ onUploadSuccess, existingResume }) {
             </span>
           </Button>
         </div>
-        
+
         {existingResume && (
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
             <FileCheck className="w-4 h-4 text-green-500" />
             <span>Resume uploaded</span>
-            <a 
-              href="/api/student/resume" 
-              target="_blank" 
+            <a
+              href={existingResume}
+              target="_blank"
               rel="noopener noreferrer"
               className="text-blue-500 hover:underline"
             >
@@ -117,7 +117,7 @@ export default function ResumeUpload({ onUploadSuccess, existingResume }) {
           </div>
         )}
       </div>
-      
+
       <p className="text-sm text-muted-foreground">
         Accepted file type: .pdf (max 5MB)
       </p>

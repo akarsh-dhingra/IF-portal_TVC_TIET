@@ -17,7 +17,7 @@ const {
   getDashboardAnalytics
 } = require('../controllers/companyController');
 const { protect, authorize } = require('../middleware/auth');
-const upload = require('../config/logoUpload');
+const upload = require('../middleware/tempUpload');
 
 // All routes protected and for companies only
 router.use(protect);

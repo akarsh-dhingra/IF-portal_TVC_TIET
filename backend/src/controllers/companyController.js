@@ -4,6 +4,7 @@ const fs = require('fs');
 const Company = require('../models/Company');
 const Role = require('../models/Role');
 const Application = require('../models/Application');
+const { cloudinary, deleteFromCloudinary } = require('../config/cloudinary');
 
 // Helper to get company ID for the logged in user
 const getCompanyId = async (userId) => {
@@ -50,10 +51,6 @@ const getJobs = asyncHandler(async (req, res) => {
   const companyId = await getCompanyId(req.user.id);
   if (!companyId) return res.json([]);
   const roles = await Role.find({ companyId });
-  try {
-    const fs = require('fs');
-    fs.writeFileSync('debug_company_roles.json', JSON.stringify(roles, null, 2));
-  } catch (e) { }
   res.json(roles);
 });
 
@@ -167,9 +164,6 @@ const updateProfile = asyncHandler(async (req, res) => {
 // ================= LOGO UPLOAD =================
 
 const uploadLogo = asyncHandler(async (req, res) => {
-  console.log('➡️ uploadLogo HIT');
-  console.log('📦 FILE:', req.file);
-
   if (!req.file) {
     return res.status(400).json({
       success: false,
@@ -177,48 +171,57 @@ const uploadLogo = asyncHandler(async (req, res) => {
     });
   }
 
-  let company = await Company.findOne({ userId: req.user.id });
+  try {
+    let company = await Company.findOne({ userId: req.user.id });
 
-  if (!company) {
-    company = await Company.create({
-      userId: req.user.id,
-      name: 'My Company',
-      description: 'Company profile',
-      website: 'https://example.com'
-    });
-  }
-
-  if (company.logo) {
-    const oldPath = path.join(
-      __dirname,
-      '..',
-      '..',
-      'uploads',
-      'logos',
-      path.basename(company.logo)
-    );
-
-    if (fs.existsSync(oldPath)) {
-      fs.unlinkSync(oldPath);
+    if (!company) {
+      company = await Company.create({
+        userId: req.user.id,
+        name: 'My Company',
+        description: 'Company profile',
+        website: 'https://example.com'
+      });
     }
-  }
 
-  if (!fs.existsSync(req.file.path)) {
-    return res.status(500).json({
-      success: false,
-      message: 'File not saved on server'
+    // Delete old logo if exists
+    if (company.logo && company.logo.includes('cloudinary')) {
+      // Extract public_id from Cloudinary URL
+      const urlParts = company.logo.split('/');
+      const fileName = urlParts[urlParts.length - 1];
+      const publicId = `internship-portal/${fileName.split('.')[0]}`;
+      await deleteFromCloudinary(publicId, 'image');
+    }
+
+    // Upload new logo to Cloudinary
+    const result = await cloudinary.uploader.upload(req.file.path, {
+      folder: 'internship-portal',
+      format: 'webp',
+      use_filename: true,
+      unique_filename: true,
     });
+
+    // Cleanup local temp file
+    if (fs.existsSync(req.file.path)) {
+      fs.unlinkSync(req.file.path);
+    }
+
+    company.logo = result.secure_url;
+    await company.save();
+
+    res.status(200).json({
+      success: true,
+      logoUrl: company.logo,
+      filePath: company.logo
+    });
+
+  } catch (error) {
+    console.error('Logo upload error:', error);
+    // Cleanup local temp file on error
+    if (req.file && fs.existsSync(req.file.path)) {
+      fs.unlinkSync(req.file.path);
+    }
+    res.status(500).json({ success: false, message: 'Upload failed', error: error.message });
   }
-
-  const logoUrl = `/uploads/logos/${req.file.filename}`;
-  company.logo = logoUrl;
-  await company.save();
-
-  res.status(200).json({
-    success: true,
-    logoUrl,
-    filePath: logoUrl
-  });
 });
 
 const deleteLogo = asyncHandler(async (req, res) => {
@@ -228,17 +231,11 @@ const deleteLogo = asyncHandler(async (req, res) => {
     throw new Error('No logo to delete');
   }
 
-  const logoPath = path.join(
-    __dirname,
-    '..',
-    '..',
-    'uploads',
-    'logos',
-    path.basename(company.logo)
-  );
-
-  if (fs.existsSync(logoPath)) {
-    fs.unlinkSync(logoPath);
+  if (company.logo.includes('cloudinary')) {
+    const urlParts = company.logo.split('/');
+    const fileName = urlParts[urlParts.length - 1];
+    const publicId = `internship-portal/${fileName.split('.')[0]}`;
+    await deleteFromCloudinary(publicId, 'image');
   }
 
   company.logo = '';

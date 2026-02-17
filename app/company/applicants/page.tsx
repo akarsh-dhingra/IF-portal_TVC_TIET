@@ -42,7 +42,7 @@ export default function ApplicantsPage() {
     const fetchApplicants = async () => {
       try {
         setLoading(true)
-        const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/company/applicants`, {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/company/applicants`, {
           headers: { Authorization: `Bearer ${token}` },
         })
         const data = await res.json()
@@ -72,7 +72,7 @@ export default function ApplicantsPage() {
 
   const handleStatusUpdate = async (id: string, newStatus: string) => {
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/company/applicant/${id}/status`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/company/applicant/${id}/status`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -388,7 +388,7 @@ export default function ApplicantsPage() {
                           className="h-10 px-6 rounded-xl border-border bg-background hover:bg-foreground/5 font-black text-[10px] uppercase tracking-widest"
                         >
                           <a
-                            href={`${process.env.NEXT_PUBLIC_BACKEND_URL}${selectedApplicant.resumeUrl}`}
+                            href={`${process.env.NEXT_PUBLIC_API_URL}${selectedApplicant.resumeUrl.startsWith('/') ? '' : '/'}${selectedApplicant.resumeUrl}`}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="flex items-center gap-2"
@@ -401,7 +401,7 @@ export default function ApplicantsPage() {
                     <div className="w-full h-96 rounded-[32px] border border-border overflow-hidden bg-foreground/[0.02]">
                       {selectedApplicant?.resumeUrl ? (
                         <iframe
-                          src={`${process.env.NEXT_PUBLIC_BACKEND_URL}${selectedApplicant.resumeUrl}#toolbar=0`}
+                          src={`${process.env.NEXT_PUBLIC_API_URL}${selectedApplicant.resumeUrl.startsWith('/') ? '' : '/'}${selectedApplicant.resumeUrl}#toolbar=0`}
                           className="w-full h-full border-none"
                           title="Resume Viewer"
                         />
