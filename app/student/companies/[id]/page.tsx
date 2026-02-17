@@ -328,12 +328,24 @@ export default function CompanyDetailsPage() {
           <SheetContent
             data-sidebar="sidebar"
             data-mobile="true"
-            className="w-[280px] bg-sidebar p-0 text-sidebar-foreground [&>button]:hidden"
+            className="w-[280px] bg-sidebar p-6 text-sidebar-foreground"
             side="left"
           >
-            <div className="flex h-full w-full flex-col">{children}</div>
+            {roles.map(role => (
+              <div
+                key={role._id}
+                onClick={() => {
+                  setSelectedRole(role)
+                  setIsMobileSidebarOpen(false)
+                }}
+                className="py-3 border-b border-border cursor-pointer hover:text-cyan-500"
+              >
+                {role.title}
+              </div>
+            ))}
           </SheetContent>
         </Sheet>
+
 
         {/* Sidebar Application */}
         <div className="lg:sticky lg:top-10">
