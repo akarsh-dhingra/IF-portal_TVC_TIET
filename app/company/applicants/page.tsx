@@ -118,6 +118,12 @@ export default function ApplicantsPage() {
       </div>
     )
   }
+  const getResumeUrl = (url?: string) => {
+    if (!url) return null
+    return url.startsWith("http")
+      ? url
+      : `${process.env.NEXT_PUBLIC_API_URL}${url.startsWith("/") ? "" : "/"}${url}`
+  }
 
   return (
     <div className="p-6 lg:p-10 max-w-7xl mx-auto space-y-10 min-h-screen">
@@ -388,7 +394,7 @@ export default function ApplicantsPage() {
                           className="h-10 px-6 rounded-xl border-border bg-background hover:bg-foreground/5 font-black text-[10px] uppercase tracking-widest"
                         >
                           <a
-                            href={`${process.env.NEXT_PUBLIC_API_URL}${selectedApplicant.resumeUrl.startsWith('/') ? '' : '/'}${selectedApplicant.resumeUrl}`}
+                            href={getResumeUrl(selectedApplicant?.resumeUrl) || "#"}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="flex items-center gap-2"
@@ -401,7 +407,7 @@ export default function ApplicantsPage() {
                     <div className="w-full h-96 rounded-[32px] border border-border overflow-hidden bg-foreground/[0.02]">
                       {selectedApplicant?.resumeUrl ? (
                         <iframe
-                          src={`${process.env.NEXT_PUBLIC_API_URL}${selectedApplicant.resumeUrl.startsWith('/') ? '' : '/'}${selectedApplicant.resumeUrl}#toolbar=0`}
+                          src={`${getResumeUrl(selectedApplicant?.resumeUrl)}#toolbar=0`}
                           className="w-full h-full border-none"
                           title="Resume Viewer"
                         />
